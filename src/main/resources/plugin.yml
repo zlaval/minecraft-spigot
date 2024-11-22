@@ -1,0 +1,8 @@
+name: yourcraft
+version: '1.0'
+main: com.zlrx.yourcraft.Yourcraft
+api-version: '1.21'
+commands:
+  heal:
+    description: heal the player
+  house:
