@@ -6,3 +6,4 @@ commands:
   heal:
     description: heal the player
   house:
+  weapon:
