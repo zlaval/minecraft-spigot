@@ -13,52 +13,67 @@ public class HouseCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        var world = Bukkit.getWorld("world");
-
-
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            var pl = player.getLocation();
+            Location location = player.getLocation();
+            int startX = location.getBlockX() + 1;
+            int startY = location.getBlockY();
+            int startZ = location.getBlockZ() + 1;
+            buildHouse(player, startX, startY, startZ);
+        }
+        return false;
+    }
 
-            System.out.println("Player Location: " + pl);
-            int xStart = pl.getBlockX() + 1;
-            int xEnd = pl.getBlockX() + 11;
+    private void buildHouse(Player player, int startX, int startY, int startZ) {
+        // Get the world the player is in
+        var world = player.getWorld();
 
-            int yStart = pl.getBlockY();
-            int yEnd = pl.getBlockY() + 3; //todo 7
+        // Dimensions
+        int width = 10;
+        int length = 10;
+        int height = 6;
+        int roofHeight = 3;
 
-            int zStart = pl.getBlockZ() + 1;
-            int zEnd = pl.getBlockZ() + 11;
-
-            int zMid = (zStart + zEnd) / 2;
-            int xMid = (xStart + xEnd) / 2;
-
-            for (int x = xStart; x < xEnd; ++x) {
-                for (int y = yStart; y < yEnd; ++y) {
-                    for (int z = zStart; z < yEnd; ++z) {
-                        if (x > xStart && x < xEnd - 1
-                                && z > zStart + 1 && z < zEnd - 1) {
-                            continue;
-                        }
-                        var location = new Location(world, x, y, z);
-                        var block = location.getBlock();
-                        try {
-
-                            if ((y == yStart || y == yStart + 1) && z == zMid && x == xMid) {
-                                block.setType(Material.AIR);
-                            } else {
-                                block.setType(Material.STONE);
-                            }
-
-
-                        } catch (Exception e) {
-                            System.out.println("Cannot set block type" + e);
+        // Build the walls
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < length; z++) {
+                for (int y = 0; y < height; y++) {
+                    // Build walls only on the edges
+                    if (x == 0 || x == width - 1 || z == 0 || z == length - 1) {
+                        // Leave space for door and window
+                        if (!((x == 0 && z == 5 && y == 1) ||  // Door position
+                                (x == width - 1 && z == 3 && (y == 3 || y == 4)))) { // Window position
+                            world.getBlockAt(startX + x, startY + y, startZ + z).setType(Material.BRICKS);
                         }
                     }
                 }
             }
-
         }
-        return false;
+
+        // Create a door (wooden)
+        world.getBlockAt(startX, startY + 1, startZ + 5).setType(Material.OAK_DOOR);
+        world.getBlockAt(startX, startY + 2, startZ + 5).setType(Material.OAK_DOOR);
+
+        // Create a window (glass)
+        world.getBlockAt(startX + width - 1, startY + 3, startZ + 3).setType(Material.GLASS);
+        world.getBlockAt(startX + width - 1, startY + 4, startZ + 3).setType(Material.GLASS);
+
+        // Build the roof (wooden planks, pyramid shape)
+        for (int y = 0; y < roofHeight; y++) {
+            for (int x = y; x < width - y; x++) {
+                for (int z = y; z < length - y; z++) {
+                    world.getBlockAt(startX + x, startY + height + y, startZ + z).setType(Material.OAK_PLANKS);
+                }
+            }
+        }
+
+        // Clear the interior
+        for (int x = 1; x < width - 1; x++) {
+            for (int z = 1; z < length - 1; z++) {
+                for (int y = 1; y < height; y++) {
+                    world.getBlockAt(startX + x, startY + y, startZ + z).setType(Material.AIR);
+                }
+            }
+        }
     }
 }

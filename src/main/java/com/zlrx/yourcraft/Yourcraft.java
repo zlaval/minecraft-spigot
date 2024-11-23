@@ -1,5 +1,6 @@
 package com.zlrx.yourcraft;
 
+import com.zlrx.yourcraft.cmd.FlyCmd;
 import com.zlrx.yourcraft.cmd.HealthCmd;
 import com.zlrx.yourcraft.cmd.HouseCmd;
 import com.zlrx.yourcraft.cmd.WeaponCmd;
@@ -18,17 +19,18 @@ public final class Yourcraft extends JavaPlugin implements Listener {
     public void onEnable() {
         //Bukkit.getPluginManager().registerEvents(this, this);
 
-        WorldCreator creator = new WorldCreator("Zalaworld");
-        creator.environment(World.Environment.NORMAL);
-        creator.type(WorldType.FLAT);
-        creator.generator("2;0;1;");
-        creator.createWorld();
-        Bukkit.getServer().createWorld(creator);
+        //WorldCreator creator = new WorldCreator("Zalaworld");
+        //creator.environment(World.Environment.NORMAL);
+        //creator.type(WorldType.FLAT);
+        //creator.generator("2;0;1;");
+        //creator.createWorld();
+        //Bukkit.getServer().createWorld(creator);
 
 
         getCommand("heal").setExecutor(new HealthCmd());
         getCommand("house").setExecutor(new HouseCmd());
         getCommand("weapon").setExecutor(new WeaponCmd());
+        getCommand("fly").setExecutor(new FlyCmd());
     }
 
     @EventHandler
